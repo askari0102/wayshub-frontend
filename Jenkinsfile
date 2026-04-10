@@ -36,7 +36,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['ssh-appserver']) {
+                sshagent(['k2ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no kelompok2@172.31.10.166 "
                     cd /home/kelompok2/wayshub &&
