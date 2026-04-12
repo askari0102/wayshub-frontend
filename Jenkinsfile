@@ -23,7 +23,7 @@ pipeline {
         stage('Install Dependencies & Test') {
             steps {
                 sh """
-                npm install
+                npm ci
                 npm run test
                 """
             }
