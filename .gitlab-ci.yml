@@ -13,7 +13,7 @@ test:
   image: node:20-alpine
   script:
     - npm install --no-audit --no-fund
-    - node --test
+    - CI=true npm test
 
 # Stage 2: Build image dan langsung push ke Docker Hub
 build-push:
