@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = "askari0102"  // Ganti dengan username Docker Hub
-        IMAGE_NAME = "kelompok2-wayshub-frontend"
+        DOCKERHUB_USER = "dwkelompok2"  // Ganti dengan username Docker Hub
+        IMAGE_NAME = "wayshub-frontend" // Repo docker hub
         TAG = "production"
     }
 
@@ -15,6 +15,15 @@ pipeline {
             }
         }
 
+        stage('Install Dependencies & Test') {
+            steps {
+                sh """
+                npm install
+                npm run test
+                """
+            }
+        }
+        
         stage('Build Image') {
             steps {
                 sh """
@@ -38,7 +47,7 @@ pipeline {
             steps {
                 sshagent(['k2ssh']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no kelompok2@172.31.10.166 "
+                    ssh -o StrictHostKeyChecking=no kelompok2@10.98.118.3 "
                     cd /home/kelompok2/wayshub &&
                     docker compose pull frontend &&
                     docker compose up -d frontend nginx
