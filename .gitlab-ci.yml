@@ -41,3 +41,31 @@ deploy:
         cd /home/kelompok2/wayshub &&
         docker compose pull frontend &&
         docker compose up -d frontend"
+  after_script:
+    - |
+      if [ "$CI_JOB_STATUS" == "success" ]; then
+        curl -H "Content-Type: application/json" -X POST -d "{
+          \"embeds\": [{
+            \"title\": \"✅ Deploy Berhasil!\",
+            \"description\": \"**wayshub-frontend** berhasil di-deploy ke production\",
+            \"color\": 3066993,
+            \"fields\": [
+              {\"name\": \"Branch\", \"value\": \"$CI_COMMIT_BRANCH\", \"inline\": true},
+              {\"name\": \"Commit\", \"value\": \"$CI_COMMIT_SHORT_SHA\", \"inline\": true},
+              {\"name\": \"Pipeline\", \"value\": \"#$CI_PIPELINE_ID\", \"inline\": true}
+            ]
+          }]
+        }" $DISCORD_WEBHOOK
+      else
+        curl -H "Content-Type: application/json" -X POST -d "{
+          \"embeds\": [{
+            \"title\": \"❌ Deploy Gagal!\",
+            \"description\": \"**wayshub-frontend** gagal di-deploy\",
+            \"color\": 15158332,
+            \"fields\": [
+              {\"name\": \"Branch\", \"value\": \"$CI_COMMIT_BRANCH\", \"inline\": true},
+              {\"name\": \"Pipeline\", \"value\": \"#$CI_PIPELINE_ID\", \"inline\": true}
+            ]
+          }]
+        }" $DISCORD_WEBHOOK
+      fi
