@@ -4,11 +4,11 @@ pipeline {
         nodejs 'node14'
     }
     environment {
-        DOCKERHUB_USER = "dwkelompok2"  // Ganti dengan username Docker Hub
-        IMAGE_NAME = "wayshub-frontend" // Repo docker hub
+        DOCKERHUB_USER = "dwkelompok2"
+        IMAGE_NAME = "wayshub-frontend"
         TAG = "production"
+        DISCORD_WEBHOOK = credentials('discord-webhook')
     }
-
     stages {
         
         stage('Checkout') {
@@ -16,12 +16,11 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/askari0102/wayshub-frontend.git'
             }
         }
-
         stage('Install Dependencies & Test') {
             steps {
                 sh """
                 npm ci
-                npm run test
+                npm run test -- --watchAll=false
                 """
             }
         }
@@ -33,7 +32,6 @@ pipeline {
                 """
             }
         }
-
         stage('Login & Push Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
@@ -44,7 +42,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 sshagent(['k2ssh']) {
@@ -57,6 +54,45 @@ pipeline {
                     """
                 }
             }
+        }
+    }
+    post {
+        success {
+            sh """
+            curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+                "embeds": [{
+                    "title": "✅ Deploy Berhasil!",
+                    "description": "**wayshub-frontend** berhasil di-deploy ke production",
+                    "color": 3066993,
+                    "fields": [
+                        {"name": "Branch", "value": "main", "inline": true},
+                        {"name": "Tag", "value": "${TAG}", "inline": true},
+                        {"name": "Build", "value": "#${BUILD_NUMBER}", "inline": true}
+                    ]
+                }]
+            }' \
+            $DISCORD_WEBHOOK
+            """
+        }
+        failure {
+            sh """
+            curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+                "embeds": [{
+                    "title": "❌ Deploy Gagal!",
+                    "description": "**wayshub-frontend** gagal di-deploy",
+                    "color": 15158332,
+                    "fields": [
+                        {"name": "Branch", "value": "main", "inline": true},
+                        {"name": "Build", "value": "#${BUILD_NUMBER}", "inline": true}
+                    ]
+                }]
+            }' \
+            $DISCORD_WEBHOOK
+            """
         }
     }
 }
