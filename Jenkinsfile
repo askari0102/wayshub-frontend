@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        nodejs 'node20'
+        nodejs 'node14'
     }
     environment {
         DOCKERHUB_USER = "dwkelompok2"  // Ganti dengan username Docker Hub
