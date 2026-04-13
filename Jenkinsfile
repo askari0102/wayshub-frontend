@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // 'node14' adalah nama yang dikonfigurasi di Tools
-        nodejs 'node14' 
-    }
-
     environment {
         DOCKERHUB_USER = "dwkelompok2"  // Ganti dengan username Docker Hub
         IMAGE_NAME = "wayshub-frontend" // Repo docker hub
