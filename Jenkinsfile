@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tools {
+        nodejs 'node20'
+    }
     environment {
         DOCKERHUB_USER = "dwkelompok2"  // Ganti dengan username Docker Hub
         IMAGE_NAME = "wayshub-frontend" // Repo docker hub
