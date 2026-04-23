@@ -1,0 +1,27 @@
+stages:
+  - test
+  - build-push
+
+variables:
+  IMAGE_NAME: "dwkelompok2/wayshub-frontend"
+  TAG: "production"
+
+# Stage 1: Test aplikasi
+test:
+  stage: test
+  image: node:20-alpine
+  script:
+    - npm install --no-audit --no-fund
+    - CI=true npm test
+
+# Stage 2: Build image dan langsung push ke Docker Hub
+build-push:
+  stage: build-push
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+    - docker build -t $IMAGE_NAME:$TAG .
+    - docker push $IMAGE_NAME:$TAG
+
