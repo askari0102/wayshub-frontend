@@ -7,8 +7,6 @@ COPY package*.json ./
 # Install dependecy tanpa audit/fund dan hapus cache npm
 RUN npm install --no-audit --no-fund && npm cache clean --force
 
-# Copy environment dari ansible
-COPY .env ./
 # Hanya copy source code utama
 COPY public/ ./public
 COPY src/ ./src
