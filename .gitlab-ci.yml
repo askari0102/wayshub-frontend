@@ -3,7 +3,7 @@ stages:
   - build-push
 
 variables:
-  IMAGE_NAME: "dwkelompok2/wayshub-frontend"
+  IMAGE_NAME: "askari0102/wayshub-frontend"
   TAG: "production"
 
 # Stage 1: Test aplikasi
